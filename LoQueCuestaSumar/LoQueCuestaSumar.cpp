@@ -1,73 +1,79 @@
-// Ignacio Ligero Martín
-// MARP17
+/*@ <authors>
+ *
+ * Ignacio Ligero Martín - MARP32
+ *
+ *@ </authors> */
 
 #include <iostream>
-#include <iomanip>
 #include <fstream>
 #include <queue>
 
+/*@ <answer>
+* Primero creo una cola de prioridad donde voy insertando
+* valores de menor a mayor. Luego, después de haberlos insertado,
+* voy cogiendo los dos elementos más bajos y los voy sumando, y
+* guardo sus valores en una variable externa llamada sum (será lo
+* que se imprima por pantalla). Una vez sumados, vuelvo a meter el valor
+* en la cola y saco dos valores repitiendo lo anterior hasta dejar
+* solo uno internamente. Por lo tanto, el coste de este problema es
+* de tipo O(Nlog(N)).
+ @ </answer> */
 
-// función que resuelve el problema
-int64_t resolver(std::priority_queue<int64_t, std::vector<int64_t>, std::greater<int64_t>> datos) {
-    int64_t ac = 0;
 
-    while (datos.size() >= 2) {
-        int64_t a = datos.top(); datos.pop();
-        int64_t b = datos.top(); datos.pop();
-        int64_t c = a + b;
-        datos.push(c);
-        ac += c;
-    }
-    
-    return ac;
-}
+ // ================================================================
+ // Escribe el código completo de tu solución aquí debajo
+ // ================================================================
+ //@ <answer>
 
-// Resuelve un caso de prueba, leyendo de la entrada la
-// configuración, y escribiendo la respuesta
 bool resuelveCaso() {
-    // leer los datos de la entrada
-    int N;
-    std::cin >> N;
+	// leer los datos de la entrada
+	int N;
 
-    if (N == 0)
-        return false;
+	if (!(std::cin >> N)) return false;
+	if (N == 0) return false;
 
-    std::priority_queue<int64_t, std::vector<int64_t>, std::greater<int64_t>> cola;
-    int aux;
+	std::priority_queue<int64_t, std::vector<int64_t>, std::greater<int64_t>> cola;
 
-    for (int i = 0; i < N; ++i) {
-        std::cin >> aux;
-        cola.push(aux);
-    }
+	for (int i = 0; i < N; ++i) {
+		int64_t M; std::cin >> M;
+		cola.push(M);
+	}
 
-    int64_t sol = resolver(cola);
+	// resolver el caso posiblemente llamando a otras funciones
+	int64_t sum = 0;
 
-    // escribir sol
+	while (cola.size() > 1) {
+		int64_t aux = cola.top(); cola.pop();
+		aux += cola.top(); cola.pop();
+		sum += aux;
+		cola.push(aux);
+	}
 
-    std::cout << sol << std::endl;
+	// escribir la solución
+	std::cout << sum << '\n';
 
-    return true;
-
+	return true;
 }
+
+//@ </answer>
+//  Lo que se escriba dejado de esta línea ya no forma parte de la solución.
 
 int main() {
-    // Para la entrada por fichero.
-    // Comentar para acepta el reto
+	// ajustes para que cin extraiga directamente de un fichero
 #ifndef DOMJUDGE
-    std::ifstream in("datos.txt");
-    auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
-#endif 
-
-
-    while (resuelveCaso())
-        ;
-
-
-    // Para restablecer entrada. Comentar para acepta el reto
-#ifndef DOMJUDGE // para dejar todo como estaba al principio
-    std::cin.rdbuf(cinbuf);
-    system("PAUSE");
+	std::ifstream in("casos.txt");
+	if (!in.is_open())
+		std::cout << "Error: no se ha podido abrir el archivo de entrada." << std::endl;
+	auto cinbuf = std::cin.rdbuf(in.rdbuf());
 #endif
 
-    return 0;
+	while (resuelveCaso());
+
+	// para dejar todo como estaba al principio
+#ifndef DOMJUDGE
+	std::cin.rdbuf(cinbuf);
+	std::cout << "Pulsa Intro para salir..." << std::flush;
+	std::cin.get();
+#endif
+	return 0;
 }
